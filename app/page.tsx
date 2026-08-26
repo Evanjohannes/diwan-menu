@@ -170,17 +170,17 @@ export default function HomePage() {
                         <div className="absolute inset-0 rounded-full ring-2 ring-[#c9a24b]/0 group-hover:ring-[#c9a24b]/40 transition-all duration-300" />
                       </div>
 
-                      {/* Price - stays at BOTTOM */}
-                      {itemVariants.length === 0 ? (
-                        <span className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-xs font-bold font-serif px-4 py-1.5 rounded-full shadow-sm group-hover:bg-[#c9a24b] group-hover:text-[#2f3b2f] transition-colors duration-300">
-                          {item.price} birr
-                        </span>
-                      ) : (
-                        <div className="flex flex-col gap-1 items-center">
+                                            {/* Price - stays at BOTTOM */}
+                      <span className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-xs font-bold font-serif px-4 py-1.5 rounded-full shadow-sm group-hover:bg-[#c9a24b] group-hover:text-[#2f3b2f] transition-colors duration-300">
+                        {item.price} birr
+                      </span>
+
+                      {itemVariants.length > 0 && (
+                        <div className="flex flex-col gap-1 items-center mt-2">
                           {itemVariants.map((v) => (
                             <span
                               key={v.id}
-                              className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-[10px] font-bold font-serif px-3 py-1 rounded-full shadow-sm"
+                              className="text-[11px] text-[#5a4a3a] font-medium"
                             >
                               {v.label}: {v.price} birr
                             </span>
