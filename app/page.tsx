@@ -147,12 +147,12 @@ export default function HomePage() {
                       key={item.id}
                       className="group flex flex-col items-center text-center transition-all duration-300 hover:transform hover:-translate-y-1"
                     >
-                      {/* Item Name - now at TOP */}
+                      {/* Item Name - at TOP */}
                       <p className="font-semibold text-sm md:text-base text-[#2f3b2f] leading-tight min-h-[2.5rem] flex items-center justify-center mb-2">
                         {item.name}
                       </p>
 
-                      {/* Circular Image - now in MIDDLE */}
+                      {/* Circular Image - in MIDDLE */}
                       <div className="relative w-28 h-28 md:w-32 md:h-32 mb-3">
                         {item.image_url ? (
                           <div className="w-full h-full rounded-full overflow-hidden ring-4 ring-[#faf7f2] shadow-lg group-hover:shadow-xl transition-shadow duration-300">
@@ -170,20 +170,26 @@ export default function HomePage() {
                         <div className="absolute inset-0 rounded-full ring-2 ring-[#c9a24b]/0 group-hover:ring-[#c9a24b]/40 transition-all duration-300" />
                       </div>
 
-                                            {/* Price - stays at BOTTOM */}
+                      {/* Main Price - at BOTTOM */}
                       <span className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-xs font-bold font-serif px-4 py-1.5 rounded-full shadow-sm group-hover:bg-[#c9a24b] group-hover:text-[#2f3b2f] transition-colors duration-300">
                         {item.price} birr
                       </span>
 
+                      {/* Variants - Styled beautifully below */}
                       {itemVariants.length > 0 && (
-                        <div className="flex flex-col gap-1 items-center mt-2">
+                        <div className="flex flex-col gap-1 items-center mt-2 w-full">
                           {itemVariants.map((v) => (
-                            <span
+                            <div
                               key={v.id}
-                              className="text-[11px] text-[#5a4a3a] font-medium"
+                              className="flex items-center justify-center gap-1.5 w-full max-w-[90%]"
                             >
-                              {v.label}: {v.price} birr
-                            </span>
+                              <span className="text-[10px] font-medium text-[#8a7a5a] uppercase tracking-[0.05em]">
+                                {v.label}:
+                              </span>
+                              <span className="text-[11px] font-bold text-[#2f3b2f] bg-[#f0ebe3] px-2.5 py-0.5 rounded-full">
+                                {v.price} birr
+                              </span>
+                            </div>
                           ))}
                         </div>
                       )}
