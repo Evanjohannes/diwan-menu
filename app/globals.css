@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html, body {
+  background-color: #faf7f2;
+  color: #2f3b2f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf7f2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8c9a3;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c9a24b;
+}
+
+/* Selection color */
+::selection {
+  background: #c9a24b;
+  color: #faf7f2;
+}
+
+/* Subtle animation for items on load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Add animation to grid items */
+.grid > div {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
 }
+
+.grid > div:nth-child(1) { animation-delay: 0.05s; }
+.grid > div:nth-child(2) { animation-delay: 0.1s; }
+.grid > div:nth-child(3) { animation-delay: 0.15s; }
+.grid > div:nth-child(4) { animation-delay: 0.2s; }
+.grid > div:nth-child(5) { animation-delay: 0.25s; }
+.grid > div:nth-child(6) { animation-delay: 0.3s; }
+.grid > div:nth-child(7) { animation-delay: 0.35s; }
+.grid > div:nth-child(8) { animation-delay: 0.4s; }
