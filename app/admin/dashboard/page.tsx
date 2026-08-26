@@ -35,6 +35,13 @@ type Category = {
   name: string
 }
 
+type Variant = {
+  id: number
+  item_id: number
+  label: string
+  price: number
+}
+
 export default function DashboardPage() {
   const [items, setItems] = useState<MenuItem[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -60,6 +67,10 @@ export default function DashboardPage() {
   const [uploadingImageFor, setUploadingImageFor] = useState<number | null>(null)
   const [imageUploadMessage, setImageUploadMessage] = useState<{id: number, text: string} | null>(null)
 
+  const [variants, setVariants] = useState<Variant[]>([])
+  const [newVariantLabel, setNewVariantLabel] = useState<{ [itemId: number]: string }>({})
+  const [newVariantPrice, setNewVariantPrice] = useState<{ [itemId: number]: string }>({})
+
   useEffect(() => {
     checkUserAndLoad()
   }, [])
@@ -75,7 +86,13 @@ export default function DashboardPage() {
     await loadItems()
     await loadCategories()
     await loadTitle()
+    await loadVariants()
     setLoading(false)
+  }
+
+  const loadVariants = async () => {
+    const { data } = await supabase.from('item_variants').select('*').order('id')
+    setVariants(data || [])
   }
 
   const loadItems = async () => {
@@ -133,6 +150,39 @@ export default function DashboardPage() {
 
     await supabase.from('menu_items').delete().eq('id', id)
     loadItems()
+  }
+
+  const addVariant = async (itemId: number) => {
+    const label = newVariantLabel[itemId]
+    const price = newVariantPrice[itemId]
+
+    if (!label || !price) {
+      alert('Enter both a size label and price')
+      return
+    }
+
+    await supabase.from('item_variants').insert({
+      item_id: itemId,
+      label,
+      price: Number(price),
+    })
+
+    setNewVariantLabel((prev) => ({ ...prev, [itemId]: '' }))
+    setNewVariantPrice((prev) => ({ ...prev, [itemId]: '' }))
+    loadVariants()
+  }
+
+  const updateVariantPrice = async (id: number, price: number) => {
+    await supabase.from('item_variants').update({ price }).eq('id', id)
+    loadVariants()
+  }
+
+  const deleteVariant = async (id: number) => {
+    const confirmed = window.confirm('Delete this size option?')
+    if (!confirmed) return
+
+    await supabase.from('item_variants').delete().eq('id', id)
+    loadVariants()
   }
 
   // --- Improved Image Management ---
@@ -596,7 +646,59 @@ export default function DashboardPage() {
                                       <XCircle className="w-3 h-3" /> Unavailable
                                     </span>
                                   )}
-                                </label>
+                                                                </label>
+                              </div>
+
+                              {/* Size Options */}
+                              <div className="mt-3 pl-2 border-l-2 border-[#e8e0d5] space-y-2">
+                                <p className="text-xs font-semibold text-[#8a7a5a]">Size options</p>
+
+                                {variants
+                                  .filter((v) => v.item_id === item.id)
+                                  .map((v) => (
+                                    <div key={v.id} className="flex items-center gap-2 text-sm">
+                                      <span className="flex-1">{v.label}</span>
+                                      <input
+                                        type="number"
+                                        defaultValue={v.price}
+                                        onBlur={(e) => updateVariantPrice(v.id, Number(e.target.value))}
+                                        className="w-20 border border-[#e8e0d5] rounded px-2 py-1 text-sm"
+                                      />
+                                      <button
+                                        onClick={() => deleteVariant(v.id)}
+                                        className="text-red-500 text-xs underline"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    placeholder="Size name (e.g. Mini)"
+                                    value={newVariantLabel[item.id] || ''}
+                                    onChange={(e) =>
+                                      setNewVariantLabel((prev) => ({ ...prev, [item.id]: e.target.value }))
+                                    }
+                                    className="flex-1 border border-[#e8e0d5] rounded px-2 py-1 text-sm"
+                                  />
+                                  <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={newVariantPrice[item.id] || ''}
+                                    onChange={(e) =>
+                                      setNewVariantPrice((prev) => ({ ...prev, [item.id]: e.target.value }))
+                                    }
+                                    className="w-20 border border-[#e8e0d5] rounded px-2 py-1 text-sm"
+                                  />
+                                  <button
+                                    onClick={() => addVariant(item.id)}
+                                    className="text-xs bg-[#2f3b2f] text-white px-2 py-1 rounded"
+                                  >
+                                    Add
+                                  </button>
+                                </div>
                               </div>
                             </div>
 

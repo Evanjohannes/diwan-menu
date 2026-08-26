@@ -1,167 +1,228 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { Mail, Lock, LogIn, AlertCircle, Eye, EyeOff, Shield } from 'lucide-react'
 
-export default function AdminLoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const router = useRouter()
+type Category = {
+  id: number
+  name: string
+}
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+type MenuItem = {
+  id: number
+  category_id: number
+  name: string
+  price: number
+  is_available: boolean
+  image_url: string | null
+}
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+type Variant = {
+  id: number
+  item_id: number
+  label: string
+  price: number
+}
 
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
-    }
+export default function HomePage() {
+  const [menuTitle, setMenuTitle] = useState('DESSERT MENU')
+  const [categories, setCategories] = useState<Category[]>([])
+  const [items, setItems] = useState<MenuItem[]>([])
+  const [variants, setVariants] = useState<Variant[]>([])
+  const [loading, setLoading] = useState(true)
 
-    router.push('/admin/dashboard')
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    const { data: settings } = await supabase
+      .from('site_settings')
+      .select('menu_title')
+      .limit(1)
+      .single()
+
+    if (settings?.menu_title) setMenuTitle(settings.menu_title)
+
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('*')
+      .order('id')
+
+    const { data: menuItems } = await supabase
+      .from('menu_items')
+      .select('*')
+      .eq('is_available', true)
+      .order('id')
+
+    const { data: variantData } = await supabase
+      .from('item_variants')
+      .select('*')
+      .order('id')
+
+    setCategories(cats || [])
+    setItems(menuItems || [])
+    setVariants(variantData || [])
+    setLoading(false)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#faf7f2]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#c9a24b] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500 font-serif">Loading menu...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] flex items-center justify-center p-6">
+    <main className="min-h-screen bg-[#faf7f2] pb-20">
       {/* Decorative Top Border */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#c9a24b] via-[#e8d5b5] to-[#c9a24b]" />
+      <div className="h-1.5 bg-gradient-to-r from-[#c9a24b] via-[#e8d5b5] to-[#c9a24b]" />
 
-      <div className="w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="text-center mb-8">
+      {/* Header - Bold & Prominent */}
+      <div className="relative text-center pt-12 pb-8 px-6">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full border border-[#d8c9a3]/20 pointer-events-none" />
+
+        <div className="relative z-10">
           <div className="inline-block">
-            <h1 className="text-5xl md:text-6xl font-serif font-black tracking-wider text-[#2f3b2f] leading-none">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-black tracking-wider text-[#2f3b2f] leading-none">
               DIWAN
             </h1>
-            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#c9a24b] to-transparent mt-1" />
+            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#c9a24b] to-transparent mt-2" />
           </div>
-          <p className="text-xs uppercase tracking-[0.3em] text-[#8a7a5a] mt-3 font-light">
-            Coffee &bull; Dessert
+
+          <p className="text-base md:text-lg font-bold uppercase tracking-[0.4em] text-[#5a4a3a] mt-4">
+            Coffee <span className="text-[#c9a24b] mx-2">•</span> Dessert
           </p>
-        </div>
 
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-[#f0ebe3] p-8">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-[#faf7f2] flex items-center justify-center mx-auto mb-4 border-2 border-[#c9a24b]/20">
-              <Shield className="w-8 h-8 text-[#c9a24b]" />
-            </div>
-            <h2 className="text-2xl font-serif font-bold text-[#2f3b2f]">Welcome Back</h2>
-            <p className="text-sm text-[#8a7a5a] mt-1">
-              Sign in to manage your menu
-            </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#2f3b2f] mt-2 tracking-wide">
+            Diwan Coffee Menu
+          </h2>
+
+          <div className="flex items-center justify-center gap-4 mt-3">
+            <div className="h-px w-12 bg-[#c9a24b]" />
+            <span className="text-[#c9a24b] text-xl font-bold">✦</span>
+            <div className="h-px w-12 bg-[#c9a24b]" />
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-red-700 font-medium">Authentication Error</p>
-                  <p className="text-xs text-red-600 mt-1">{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-[#8a7a5a] block mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b8a88a]" />
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-[#e8e0d5] rounded-lg pl-11 pr-4 py-3 focus:ring-2 focus:ring-[#c9a24b] focus:border-transparent outline-none transition-all"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-[#8a7a5a] block mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b8a88a]" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-[#e8e0d5] rounded-lg pl-11 pr-12 py-3 focus:ring-2 focus:ring-[#c9a24b] focus:border-transparent outline-none transition-all"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8a7a5a] hover:text-[#2f3b2f] transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#2f3b2f] text-white rounded-lg px-6 py-3 hover:bg-[#3f4f3f] transition-all font-medium disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  Sign In
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Forgot Password Link */}
-          <div className="text-center mt-4">
-            <a 
-              href="/admin/forgot-password" 
-              className="text-sm text-[#8a7a5a] hover:text-[#c9a24b] transition-colors font-medium"
-            >
-              Forgot your password?
-            </a>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Shield className="w-3 h-3 text-[#c9a24b]" />
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#b8a88a]">
-              Secure &bull; Private
-            </p>
-          </div>
-          <p className="text-[8px] text-[#d8c9a3] mt-2 tracking-widest">
-            DIWAN COFFEE • SWEET MOMENTS, MADE FRESH
+          <p className="text-base md:text-lg font-semibold text-[#8a7a5a] mt-2 tracking-wide">
+            Sweet Moments, Made Fresh
           </p>
+
+          <div className="mt-2">
+            <span className="text-[#c9a24b] text-lg font-bold">✦</span>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {categories.map((cat) => {
+          const categoryItems = items.filter((item) => item.category_id === cat.id)
+          if (categoryItems.length === 0) return null
+
+          return (
+            <div key={cat.id} className="mb-14">
+              {/* Category Header */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#d8c9a3]" />
+                <div className="relative">
+                  <h2 className="text-xl md:text-2xl font-bold text-[#2f3b2f] tracking-wide px-4">
+                    {cat.name}
+                  </h2>
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#c9a24b]" />
+                </div>
+                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#d8c9a3]" />
+              </div>
+
+              {/* Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {categoryItems.map((item) => {
+                  const itemVariants = variants.filter((v) => v.item_id === item.id)
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="group flex flex-col items-center text-center transition-all duration-300 hover:transform hover:-translate-y-1"
+                    >
+                      {/* Item Name - now at TOP */}
+                      <p className="font-semibold text-sm md:text-base text-[#2f3b2f] leading-tight min-h-[2.5rem] flex items-center justify-center mb-2">
+                        {item.name}
+                      </p>
+
+                      {/* Circular Image - now in MIDDLE */}
+                      <div className="relative w-28 h-28 md:w-32 md:h-32 mb-3">
+                        {item.image_url ? (
+                          <div className="w-full h-full rounded-full overflow-hidden ring-4 ring-[#faf7f2] shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-gradient-to-br from-[#f0ebe3] to-[#e8e0d5] ring-4 ring-[#faf7f2] shadow-lg flex items-center justify-center">
+                            <span className="text-3xl opacity-40">🍰</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 rounded-full ring-2 ring-[#c9a24b]/0 group-hover:ring-[#c9a24b]/40 transition-all duration-300" />
+                      </div>
+
+                      {/* Price - stays at BOTTOM */}
+                      {itemVariants.length === 0 ? (
+                        <span className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-xs font-bold font-serif px-4 py-1.5 rounded-full shadow-sm group-hover:bg-[#c9a24b] group-hover:text-[#2f3b2f] transition-colors duration-300">
+                          {item.price} birr
+                        </span>
+                      ) : (
+                        <div className="flex flex-col gap-1 items-center">
+                          {itemVariants.map((v) => (
+                            <span
+                              key={v.id}
+                              className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-[10px] font-bold font-serif px-3 py-1 rounded-full shadow-sm"
+                            >
+                              {v.label}: {v.price} birr
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Footer */}
+      <div className="mt-12 pt-8 border-t border-[#d8c9a3]/30 max-w-4xl mx-auto px-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center gap-4">
+            <div className="h-px w-8 bg-[#d8c9a3]" />
+            <span className="text-[#c9a24b] text-sm font-bold">✦</span>
+            <div className="h-px w-8 bg-[#d8c9a3]" />
+          </div>
+
+          <div className="text-center space-y-1">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8a7a5a] font-semibold">
+              Premium Ingredients &bull; Freshly Made
+            </p>
+            <p className="text-sm text-[#8a7a5a] font-serif font-medium italic">
+              Made fresh, made with love <span className="text-red-400">♥</span>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 mt-1">
+            <div className="h-px w-6 bg-[#d8c9a3]" />
+            <p className="text-[8px] uppercase tracking-[0.3em] text-[#b8a88a] font-semibold">
+              Thank You For Choosing Us
+            </p>
+            <div className="h-px w-6 bg-[#d8c9a3]" />
+          </div>
+        </div>
+      </div>
+    </main>
   )
 }
