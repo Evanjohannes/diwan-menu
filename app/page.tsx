@@ -82,39 +82,52 @@ export default function HomePage() {
       {/* Decorative Top Border */}
       <div className="h-1.5 bg-gradient-to-r from-[#c9a24b] via-[#e8d5b5] to-[#c9a24b]" />
 
-      {/* Header - Bold & Prominent */}
+      {/* Header - Premium Styling */}
       <div className="relative text-center pt-12 pb-8 px-6">
+        {/* Background decorative circles */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full border border-[#d8c9a3]/20 pointer-events-none" />
-
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border border-[#d8c9a3]/10 pointer-events-none" />
+        
         <div className="relative z-10">
-          <div className="inline-block">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-black tracking-wider text-[#2f3b2f] leading-none">
-              DIWAN
-            </h1>
-            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#c9a24b] to-transparent mt-2" />
+          {/* DIWAN - Large & Bold */}
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-black tracking-wider text-[#2f3b2f] leading-none">
+            DIWAN
+          </h1>
+          
+          {/* Decorative diamond */}
+          <div className="flex items-center justify-center gap-3 mt-2">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#c9a24b]/50" />
+            <span className="text-[#c9a24b] text-lg font-light">◆</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#c9a24b]/50" />
           </div>
 
-          <p className="text-base md:text-lg font-bold uppercase tracking-[0.4em] text-[#5a4a3a] mt-4">
-            Coffee <span className="text-[#c9a24b] mx-2">•</span> Dessert
-          </p>
-
-          <h2 className="text-2xl md:text-3xl font-bold text-[#2f3b2f] mt-2 tracking-wide">
-            Diwan Coffee Menu
-          </h2>
-
-          <div className="flex items-center justify-center gap-4 mt-3">
-            <div className="h-px w-12 bg-[#c9a24b]" />
-            <span className="text-[#c9a24b] text-xl font-bold">✦</span>
-            <div className="h-px w-12 bg-[#c9a24b]" />
+          {/* Coffee • Dessert - Clean & Elegant */}
+          <div className="mt-4">
+            <p className="text-sm md:text-base font-light uppercase tracking-[0.4em] text-[#5a4a3a]">
+              Coffee <span className="text-[#c9a24b] mx-2 font-bold">•</span> Dessert
+            </p>
           </div>
 
-          <p className="text-base md:text-lg font-semibold text-[#8a7a5a] mt-2 tracking-wide">
+          {/* Decorative ❧ symbols */}
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <span className="text-[#c9a24b] text-sm opacity-50">❧</span>
+            <h2 className="text-2xl md:text-3xl font-serif font-light text-[#2f3b2f] tracking-wide">
+              Diwan Coffee Menu
+            </h2>
+            <span className="text-[#c9a24b] text-sm opacity-50">❧</span>
+          </div>
+
+          {/* Decorative divider with ✦ */}
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#c9a24b]" />
+            <span className="text-[#c9a24b] text-xl font-light">✦</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#c9a24b]" />
+          </div>
+
+          {/* Sweet Moments, Made Fresh - Elegant */}
+          <p className="text-base md:text-lg font-serif font-light italic text-[#8a7a5a] tracking-wide mt-3">
             Sweet Moments, Made Fresh
           </p>
-
-          <div className="mt-2">
-            <span className="text-[#c9a24b] text-lg font-bold">✦</span>
-          </div>
         </div>
       </div>
 
@@ -147,12 +160,14 @@ export default function HomePage() {
                       key={item.id}
                       className="group flex flex-col items-center text-center transition-all duration-300 hover:transform hover:-translate-y-1"
                     >
-                      {/* Item Name - at TOP */}
-                      <p className="font-semibold text-sm md:text-base text-[#2f3b2f] leading-tight min-h-[2.5rem] flex items-center justify-center mb-2">
-                        {item.name}
-                      </p>
+                      {/* Item Name - with better styling */}
+                      {/* Item Name - Vintage luxury serif style */}
+<p className="font-serif font-semibold text-sm md:text-base text-[#2f3b2f] leading-tight min-h-[2.5rem] flex items-center justify-center mb-3 px-1 relative tracking-wide">
+  {item.name}
+  <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-[#c9a24b]"></span>
+</p>
 
-                      {/* Circular Image - in MIDDLE */}
+                      {/* Circular Image */}
                       <div className="relative w-28 h-28 md:w-32 md:h-32 mb-3">
                         {item.image_url ? (
                           <div className="w-full h-full rounded-full overflow-hidden ring-4 ring-[#faf7f2] shadow-lg group-hover:shadow-xl transition-shadow duration-300">
@@ -170,12 +185,12 @@ export default function HomePage() {
                         <div className="absolute inset-0 rounded-full ring-2 ring-[#c9a24b]/0 group-hover:ring-[#c9a24b]/40 transition-all duration-300" />
                       </div>
 
-                      {/* Main Price - at BOTTOM */}
+                      {/* Main Price */}
                       <span className="inline-block bg-[#2f3b2f] text-[#f4e9d0] text-xs font-bold font-serif px-4 py-1.5 rounded-full shadow-sm group-hover:bg-[#c9a24b] group-hover:text-[#2f3b2f] transition-colors duration-300">
                         {item.price} birr
                       </span>
 
-                      {/* Variants - Styled beautifully below */}
+                      {/* Variants */}
                       {itemVariants.length > 0 && (
                         <div className="flex flex-col gap-1 items-center mt-2 w-full">
                           {itemVariants.map((v) => (
